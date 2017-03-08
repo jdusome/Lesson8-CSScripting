@@ -77,6 +77,13 @@ function LoadPageContent(){
 
 //loads the content of the home page
 function LoadHomePage(){
+    let today = new Date();
+
+    console.log(today.getDate());
+    console.log(today.getMonth());
+    console.log(today.getFullYear());
+    console.log(today.toLocaleDateString());
+
     let data;
 
         //STEP 1 - instantiate an XHR object of a new XMLHttpRequest
@@ -177,8 +184,8 @@ function LoadProjectsPage(){
 };
 
 function LoadContactPage(){
-
-     let FullName = document.getElementById("FullName");
+    /*
+      let FullName = document.getElementById("FullName");
       let ContactNumber = document.getElementById("ContactNumber");
       let Email = document.getElementById("Email");
       let Message = document.getElementById("Message");
@@ -192,6 +199,8 @@ function LoadContactPage(){
         console.log(Email);
         console.log(Message);
 })
+
+ */
 
 };
 
