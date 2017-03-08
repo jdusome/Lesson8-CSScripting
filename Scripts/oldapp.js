@@ -5,47 +5,118 @@
 // IIFE
 (function(){ 
 
-console.log("App Started");
-console.info(`Page Title: ${document.title}`);
+let mainNav = document.getElementById("mainNav");
+    let navbarHTML;
+
+    //STEP 1 - Create an XHR object
+    let navXHR = new XMLHttpRequest();
+
+    //Step 2 - Open a file
+    navXHR.open("GET","../navbar.html", true);
+
+    //STEP 3 - Send the XMLHttpRequest
+    navXHR.send();
+
+    //STEP 4 - Listen for readystate of 4 and server status of 200 on readystatechange
+    navXHR.onreadystatechange = function() {
+
+        if((this.readyState === 4) && (this.status === 200)){
+            //read the data
+            navbarHTML = this.responseText;
+        }
+
+    };
+
+    //STEP 5 - wait until the navbar file has finished loading
+    navXHR.addEventListener("load", function(){
+
+        mainNav.innerHTML = navbarHTML;
+
+        switch(document.title) {
+
+            case "Home":
+                let homeLink = document.getElementById("homeLink");
+                homeLink.setAttribute("class", "active");
+            break;
+
+            case "Projects":
+                let projectLink = document.getElementById("projectsLink");
+                projectLink.setAttribute("class", "active");
+            break;
+
+            case "Contact":
+                let contactLink = document.getElementById("contactLink");
+                contactLink.setAttribute("class", "active");
+            break;
+        }
+
+    });
+
 
 switch (document.title) {
 
 case "Home":
 
-    //declare and initialize the firstHeading variable
-    //the firstHeading variable creates a reference the h1 element on the page
-    let firstHeading = document.getElementById("firstHeading");
+    let data;
 
-    firstHeading.style.color = "#FF00FF";
-    firstHeading.style.fontWeight = "500";
-    firstHeading.style.fontStyle = "italic";
-    firstHeading.style.opacity = "0.5";
+    //STEP 1 - instantiate an XHR object of a new XMLHttpRequest
+    let XHR = new XMLHttpRequest();
+
+    //STEP 2 - Open the JSON file
+    //arguments - GET/POST, URL, Async (True or False)
+    // GET is for non sensitive data, POST is more secure but slower
+    XHR.open("GET", "../games.json", true);
+
+    //STEP 3 - Initiate the call (send out a call to the XHR object)
+    //you can also add a filter if you are looking for a particular document
+    //for example, you could do "games". If it doesn't match anything in the document it will not filter
+    XHR.send(null);
+
+    //Step 4 - Listen for ready state for be 4
+    //Creates a handler to be done when the 
+   
+    XHR.addEventListener("readystatechange", function(){
+
+         //There are different ready states that represent the stage of data transfer, 4 means done
+         //There are different server status codes that represent state of server, 200 means all is good
+        if((XHR.readyState === 4) && (XHR.status === 200)){
+
+            //convert the response text into a JSON file
+            data = JSON.parse(this.responseText);
+
+        }
+
+    });
+
+    //STEP 5 - wait until data is finished loading before injecting it into the document
+    XHR.addEventListener("load", function(){
+
+        //created a hook into our UI into back end JS
+    let gameListBody = document.getElementById("gameListBody");
+
+    //for each game in data.games, do this this...
+    data.games.forEach(function(game){
+
+        //create a new table row element called newRow
+        let newRow = document.createElement("tr")
+
+        //insert HTML within the newly created element
+        newRow.innerHTML = `
+        <tr>
+            <td class="text-center">${game.name}</td>
+            <td class="text-center">${game.cost}</td>
+            <td class="text-center">${game.rating}</td>
+        </tr>
+        `;
+
+        //append the element on to the gameListBody
+        gameListBody.appendChild(newRow);
+       }, this);
+
+    });
 
 
-    //THREE STEPS FOR INJECTING CONTENT ONTO page
-    //STEP 1 - Create a reference to an element (reference variable)
-    let FirstParagraph = document.getElementById("firstParagraph");
-    let SecondParagraph = document.getElementById("secondParagraph");
-
-    //STEP 2 - Create a variable that contains CONTENT (content variable)
-    let myContent = "It was a sunny day in Florida. It felt great. I love the sun.";
-    let myHTMLContent = `<h2>Second Heading</h2>
-                         <p>This is an inner paragraph to the second paragraph</p>`;
-
-    //STEP 3 - Assign the variable with your content to the textContent property of the reference variable (operation)
-    FirstParagraph.textContent = myContent;
-    SecondParagraph.innerHTML = myHTMLContent;
-
-    //Assigns the button in our index to a variable
-    let clickMeButton = document.getElementById("clickMeButton");
-
-    //adds an event listener to trigger when the clickMeButton is clicked. It will call the Click function.
-    clickMeButton.addEventListener("click", Click);
-
-    // create a Click function, which will log to the console when we click. Used as an event handler.
-    function Click() {
-        console.log("Clicked...");
-    }
+    
 
     break;
 
@@ -58,37 +129,43 @@ case "Home":
     let ShowButton = document.getElementById("ShowButton");
     let FirstProjectImage = document.getElementById("FirstProjectImage");
 
-    let image = new Image();
-    image.src = FirstProjectImage.src;
-    console.log(image.width);
-    
+    let ButtonArray = [HideButton, HalfSizeButton, ThreeQuarterSizeButton, ShowButton];
 
-    //Step 2 - setup event listeners (register event listeners) for each button
-    HideButton.addEventListener("click", function(){
-        FirstProjectImage.style.visibility = "hidden";
+    //create a for statemento assign even listeners to each button in the array
+    ButtonArray.forEach(function(button) {
+
+        button.addEventListener("click", function(event){
+
+            //store which button has been clicked in current button
+            let currentButton = button.getAttribute("id")
+
+            switch (currentButton){
+                case "HideButton":
+                    FirstProjectImage.style.visibility = "hidden";
+                break;
+                case "HalfSizeButton":
+                    FirstProjectImage.style.width = "50%";                 
+                break;
+                case "ThreeQuarterSizeButton":
+                    FirstProjectImage.style.width = "75%"; 
+                break;
+                case "ShowButton":
+                    FirstProjectImage.style.visibility = "visible";
+                    FirstProjectImage.style.width = "100%";
+                break;
+        };
+
+    }, this);
+
     });
 
-    ShowButton.addEventListener("click", function(){
-        FirstProjectImage.style.visibility = "visible";
-        FirstProjectImage.style.width = "100%";
-    });
-
-    HalfSizeButton.addEventListener("click", function(){
-        FirstProjectImage.style.width = "50%";
-    });
-
-    ThreeQuarterSizeButton.addEventListener("click", function(){
-        FirstProjectImage.style.width = (image.width * 0.75) + "px";
-        console.log(`Width: ${FirstProjectImage.getAttribute("this.width")}`);
-    });
+    //Create one event listener for all of them
 
 
     
     break;
 
     case "Contact":
-
-    
 
     break;
 
